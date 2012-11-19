@@ -1,9 +1,10 @@
 ----------------------------------------------------------------------------------------
-integerToWordConverter
+integerToWordConverter (an elegant name, I agree...)
 ----------------------------------------------------------------------------------------
 By Spencer Gardner (@spencergardner) (spence450@gmail.com)
 ----------------------------------------------------------------------------------------
 
+> To view an interactive page that uses the converter, check out /home.html
 > Converts any integer from -9999 to 9999 to Spanish
 > Utilizes Jasmine - a unit testing framework - with a number of tests.
   > To run tests, open jasmine -> SpecRunner.html
