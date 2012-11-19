@@ -82,6 +82,12 @@ Number.prototype.convertNumToWord = function() {
 
   		var numDigits = numberString.length;
 
+
+  		var thousandsInt = parseInt(numberString[3]); // Thousands digit
+  		var hundredsInt = parseInt(numberString[2]);  // Hundreds digit 
+  		var tensInt = parseInt(numberString[1]);	  // Tens digit
+  		var onesInt = parseInt(numberString[0]);	  // Ones digit
+
   		/**
   		* Route to correct function based on number of digits in original number.
 		* (note: can be added to for more digits if desired)
@@ -101,9 +107,9 @@ Number.prototype.convertNumToWord = function() {
 
 		/**
 		*  The convert[#]digits functions jump down a function for each decimal place
+		*  As each function is called, the variable "sentence" is built to prepare to return
 		*/
 		function convertFourdigits() {
-	    	var thousandsInt = parseInt(numberString[3]);
 	    	if(thousandsInt > 1)
 	    		sentence += digitToString(thousandsInt) + " mil ";
 	    	else {
@@ -114,7 +120,6 @@ Number.prototype.convertNumToWord = function() {
 	    }
 
 	    function convertThreeDigits() {
-	    	var hundredsInt = parseInt(numberString[2]);
 	    	if(hundredsInt > 0)
 	    		sentence += hundreds[hundredsInt - 1] + " ";
 
@@ -122,10 +127,14 @@ Number.prototype.convertNumToWord = function() {
 	    }
 
 	    function convertTwoDigits() {
-	    	var tensInt = parseInt(numberString[1]);
 	    	var lastTwoDigits = "" + numberString[1] + numberString[0];
 	    	var lastTwoInt = parseInt(lastTwoDigits);
 
+	    	/**
+			*  Special cases:
+			*  Last two digits < 10
+			*  				   >=10, <=15
+			*/
 	    	if(lastTwoInt < 10) {
 	    		return convertOneDigit();
 	    	}
@@ -133,7 +142,7 @@ Number.prototype.convertNumToWord = function() {
 	    		return sentence += teens[lastTwoInt - 10];
 	    	}
 	    	else if(lastTwoInt >= 16 && lastTwoInt <= 19) {
-	    		return sentence += specialTeens[0] + digitToString(lastTwoDigits[1], true);
+	    		return sentence += specialTeens[0] + digitToString(lastTwoDigits[1], true); // Add accents
 	    	}
 	    	else if(lastTwoInt == 20) {
 	    		sentence += tens[1];
@@ -144,7 +153,7 @@ Number.prototype.convertNumToWord = function() {
 	    		return sentence;
 	    	}
 	    	else if(lastTwoInt >= 21 && lastTwoInt <= 29) {
-	    		return sentence += specialTeens[1] + digitToString(lastTwoDigits[1], true);
+	    		return sentence += specialTeens[1] + digitToString(lastTwoDigits[1], true); // Add accents
 	    	}
 	    	else
 	    	{
@@ -156,23 +165,19 @@ Number.prototype.convertNumToWord = function() {
 	    }
 
 	    function convertOneDigit() {
-	    	var onesInt = parseInt(numberString[0]);
-	    	var tensInt = parseInt(numberString[1]);
-
-	    	//alert(onesInt + " and " + tensInt);
 	    	if(numDigits == 1)
 	    	{
 	    		sentence += ones[onesInt];
 	    		return sentence;
 	    	}
 	    	else if(tensInt == 0 && onesInt > 0) {
-	    		sentence += digitToString(onesInt, false);
+	    		sentence += digitToString(onesInt, false); // Leave accents off
 	    	}
 	    	else if(onesInt > 0) {
-	    		sentence += "y " + digitToString(onesInt, false);
+	    		sentence += "y " + digitToString(onesInt, false); // Leave accents off
 	    	}
 
-	    	return sentence;
+	    	return sentence; // Return completed sentnece
 	    }
 
 	    // Converts integer to string equivalent, WITH or WITHOUT accents

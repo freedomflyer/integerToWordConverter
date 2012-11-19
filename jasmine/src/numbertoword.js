@@ -1,18 +1,12 @@
 /**
-*  This is the "spec" version of convertNumToWord used for unit testing.
-*/
-
-
-
-/**
 *	A class for converting an integer to a natrual language sentence in Spanish.
 *	Accepts integers from -9999 to 9999
 *
 * 	By Spencer Gardner (@spencergardner) (spence450@gmail.com)
 */
-Number.prototype.convertNumToWord = function()
-{
-	// Number definitions
+Number.prototype.convertNumToWord = function() {
+
+	// Number string definitions - Espanolo!
 	var ones = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
 	var tens = ["diez", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
 	var teens = ["diez", "once", "doce", "trece", "catorce", "quince"];
@@ -32,13 +26,14 @@ Number.prototype.convertNumToWord = function()
 	    9 : "nueve",
 		};
 
-	// Main function to take language input and 
     return function (language) {
-    	var number = this.valueOf();
-    	var sentence = "";
+
+    	var number = this.valueOf(); // Since this is the prototype of primitive, get the value here.
+    	var sentence = ""; 			 // Sentence to return
 
     	/** 
     	*  Check for erroneous input. Accepts only -9999 thru 9999 integers
+    	*  Throws RangeError if not correct.
     	*  Route to correct language
     	*/
     	try {
@@ -61,8 +56,7 @@ Number.prototype.convertNumToWord = function()
     	catch(e){ console.log(e.name + " " + e.message);}
 
 
-    	// Remove start+end spaces
-    	sentence = sentence.replace(/(^\s+|\s+$)/g, '');
+    	sentence = sentence.replace(/(^\s+|\s+$)/g, ''); // Remove start and end spaces
     	return sentence;
     }; 
 
@@ -74,9 +68,7 @@ Number.prototype.convertNumToWord = function()
     function convertSpanishSentence(number) {
 
     	var sentence = "";
-
-    	// String containing integer sign (negative or positive)
-    	var negOrPos = number < 0 ? sentence += "menos " : "";
+    	var negOrPos = number < 0 ? sentence += "menos " : ""; // String containing integer sign (negative or positive)
 
     	// Remove negative sign off front of number, if negative.
     	if(negOrPos){number = -number;}
@@ -89,6 +81,12 @@ Number.prototype.convertNumToWord = function()
     	numberString = numberString.split("").reverse().join("");
 
   		var numDigits = numberString.length;
+
+
+  		var thousandsInt = parseInt(numberString[3]); // Thousands digit
+  		var hundredsInt = parseInt(numberString[2]);  // Hundreds digit 
+  		var tensInt = parseInt(numberString[1]);	  // Tens digit
+  		var onesInt = parseInt(numberString[0]);	  // Ones digit
 
   		/**
   		* Route to correct function based on number of digits in original number.
@@ -108,11 +106,10 @@ Number.prototype.convertNumToWord = function()
 		}
 
 		/**
-		*  The next four convert[#]digits functions will jump down the next one to compute each
-		*  decimal place.
+		*  The convert[#]digits functions jump down a function for each decimal place
+		*  As each function is called, the variable "sentence" is built to prepare to return
 		*/
 		function convertFourdigits() {
-	    	var thousandsInt = parseInt(numberString[3]);
 	    	if(thousandsInt > 1)
 	    		sentence += digitToString(thousandsInt) + " mil ";
 	    	else {
@@ -123,7 +120,6 @@ Number.prototype.convertNumToWord = function()
 	    }
 
 	    function convertThreeDigits() {
-	    	var hundredsInt = parseInt(numberString[2]);
 	    	if(hundredsInt > 0)
 	    		sentence += hundreds[hundredsInt - 1] + " ";
 
@@ -131,10 +127,14 @@ Number.prototype.convertNumToWord = function()
 	    }
 
 	    function convertTwoDigits() {
-	    	var tensInt = parseInt(numberString[1]);
 	    	var lastTwoDigits = "" + numberString[1] + numberString[0];
 	    	var lastTwoInt = parseInt(lastTwoDigits);
 
+	    	/**
+			*  Special cases:
+			*  Last two digits < 10
+			*  				   >=10, <=15
+			*/
 	    	if(lastTwoInt < 10) {
 	    		return convertOneDigit();
 	    	}
@@ -142,7 +142,7 @@ Number.prototype.convertNumToWord = function()
 	    		return sentence += teens[lastTwoInt - 10];
 	    	}
 	    	else if(lastTwoInt >= 16 && lastTwoInt <= 19) {
-	    		return sentence += specialTeens[0] + digitToString(lastTwoDigits[1], true);
+	    		return sentence += specialTeens[0] + digitToString(lastTwoDigits[1], true); // Add accents
 	    	}
 	    	else if(lastTwoInt == 20) {
 	    		sentence += tens[1];
@@ -153,7 +153,7 @@ Number.prototype.convertNumToWord = function()
 	    		return sentence;
 	    	}
 	    	else if(lastTwoInt >= 21 && lastTwoInt <= 29) {
-	    		return sentence += specialTeens[1] + digitToString(lastTwoDigits[1], true);
+	    		return sentence += specialTeens[1] + digitToString(lastTwoDigits[1], true); // Add accents
 	    	}
 	    	else
 	    	{
@@ -165,26 +165,22 @@ Number.prototype.convertNumToWord = function()
 	    }
 
 	    function convertOneDigit() {
-	    	var onesInt = parseInt(numberString[0]);
-	    	var tensInt = parseInt(numberString[1]);
-
-	    	//alert(onesInt + " and " + tensInt);
 	    	if(numDigits == 1)
 	    	{
 	    		sentence += ones[onesInt];
 	    		return sentence;
 	    	}
 	    	else if(tensInt == 0 && onesInt > 0) {
-	    		sentence += digitToString(onesInt, false);
+	    		sentence += digitToString(onesInt, false); // Leave accents off
 	    	}
 	    	else if(onesInt > 0) {
-	    		sentence += "y " + digitToString(onesInt, false);
+	    		sentence += "y " + digitToString(onesInt, false); // Leave accents off
 	    	}
 
-	    	return sentence;
+	    	return sentence; // Return completed sentnece
 	    }
 
-	    // Converts integer to string equivalent, with or without accents
+	    // Converts integer to string equivalent, WITH or WITHOUT accents
 	    function digitToString(number, accents) {
 	    	if(accents)
 	    		return specialOnes[number];
@@ -203,17 +199,3 @@ Number.prototype.convertNumToWord = function()
     }
 
 }();
-
-
-
-// Tests
-var correctNums = [
-	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, -9293, 9273, 1000, 1001, 999, 990, 909, 
-]
-
-console.log("------CORRECT NUMBERS------------");
-for(var num in correctNums) {
-	console.log(correctNums[num].convertNumToWord("es"));
-}
-
-
